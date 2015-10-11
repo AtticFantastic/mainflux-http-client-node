@@ -1,0 +1,11 @@
+{
+  "name": "mainflux-http-client-node",
+  "description": "Mainflux HTTP RESTful client in NodeJS",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Mainflux/mainflux-http-client-node"
+  },
+  "license": "Apache-2.0",
+  "dependencies": {
+  }
+}
