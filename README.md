@@ -11,7 +11,7 @@ git clone
 
 Install Node modules:
 ```bash
-    npm install
+npm install
 ```
 
 
