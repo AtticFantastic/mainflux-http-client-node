@@ -6,10 +6,13 @@
  * See the included LICENSE file for more details.
  */
 
+var async = require('async');
+
 var mf   = require ('../');
 var mfClient = mf.client();
 
-var DEVICE_TOKEN = "MY_SECRET_TOKEN"
+//var DEVICE_TOKEN = "MY_SECRET_TOKEN"
+var DEVICE_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmb28iOiJiYXIiLCJpYXQiOjE0NDk1MjYzNDgsImV4cCI6MTQ1MDEzMTE0OH0.OFHFRfSgZGxZOYg68bwX3X0qlW_E0fdk61y6kkQl894"
 
 var myTestDeviceId = "";
 
@@ -17,78 +20,92 @@ var myTestDeviceId = "";
 /**
  * setToken();
  */
-mfClient.setToken(DEVICE_TOKEN);
+var setToken = function(cb) {
+    mfClient.setToken(DEVICE_TOKEN);
+    cb();
+}
 
 
 /**
  * getStatus()
  */
-mfClient.getStatus(function (err, rsp, body) {
-    if (!err && rsp.statusCode == 200) {
-        console.log(body);
-    }
-});
+var getStatus = function(cb) {
+    mfClient.getStatus(function (err, rsp, body) {
+        if (!err && rsp.statusCode == 200) {
+            console.log(body);
+        }
+        cb();
+    });
+}
 
 
 /**
  * getDevices()
  */
-mfClient.getDevices(function (err, rsp, body) {
-    if (!err && rsp.statusCode == 200) {
-        console.log(body);
-    }
-});
+var getDevices = function(cb) {
+    mfClient.getDevices(function (err, rsp, body) {
+        if (!err && rsp.statusCode == 200) {
+            console.log(body);
+        }
+        cb();
+    });
+}
 
 
 /**
  * createDevice()
  */
-mfClient.createDevice(function (err, rsp, body) {
-    if (!err && rsp.statusCode == 200) {
-        console.log(body);
+var createDevice = function(cb) {
+    var device = {'library': 'test'};
+    mfClient.createDevice(device, function (err, rsp, body) {
+        if (!err && rsp.statusCode == 200) {
+            console.log(body);
 
-        myTestDeviceId = JSON.parse(body)._id;
-        console.log("myTestDevice = ", myTestDeviceId);
-    }
-});
+            myTestDeviceId = JSON.parse(body)._id;
+            console.log("Created myTestDevice = ", myTestDeviceId);
+        }
+        cb();
+    });
+}
 
 
 /**
  * getDevice()
  */
-mfClient.getDevice(myTestDeviceId, function (err, rsp, body) {
-    if (!err && rsp.statusCode == 200) {
-        console.log(body);
-    }
-});
+var getDevice = function(cb) {
+    mfClient.getDevice(myTestDeviceId, function (err, rsp, body) {
+        if (!err && rsp.statusCode == 200) {
+            console.log(body);
+        }
+        cb();
+    });
+}
 
 
 /**
  * deleteDevice()
  */
-mfClient.getDevice(myTestDeviceId, function (err, rsp, body) {
-    if (!err && rsp.statusCode == 200) {
-        console.log(body);
-    }
-});
+var deleteDevice = function(cb) {
+    mfClient.deleteDevice(myTestDeviceId, function (err, rsp, body) {
+        if (!err && rsp.statusCode == 200) {
+            console.log(body);
+        }
+        cb();
+    });
+}
 
 
-/**
- * getDevice() - try to fetch it again (should be empty JSON now)
- */
-mfClient.getDevice(myTestDeviceId, function (err, rsp, body) {
-    if (!err && rsp.statusCode == 200) {
-        console.log(body);
-    }
-});
-
-
-/**
- * getDevices()
- */
-mfClient.getDevices(function (err, rsp, body) {
-    if (!err && rsp.statusCode == 200) {
-        console.log(body);
-    }
+async.series([
+    setToken,
+    getStatus,
+    getDevices,
+    createDevice,
+    getDevice,
+    deleteDevice,
+    getDevice,
+    getDevices
+], function (err, results) {
+    // Here, results is an array of the value from each function
+    //console.log(results);
 });
 
